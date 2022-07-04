@@ -110,6 +110,12 @@ public class ClientHandler {
                 if ("/end".equals(message)) {
                     break; // если присылает "/end" делаем break
                 }
+                if(message.startsWith("/w")){
+                    String nickTo = message.split(" ")[1];
+                    String mess = message.split(" ")[2];
+                    server.privateMessage(this, nickTo, mess);
+                    continue;
+                }
                 // для всех остальных сообщений вызываем метод broadcast, где рассылаем сообщения всем клиентам
                 server.broadcast(nick + ": " + message);
             } catch (IOException e) {

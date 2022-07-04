@@ -55,4 +55,14 @@ public class ChatServer {
     public void unsubscribe(ClientHandler client) {
         clients.remove(client); // если пользователь вышел, убираем его из списка клиентов
     }
+
+    public void privateMessage(ClientHandler from, String nickTo, String message) {
+        for (ClientHandler client : clients){
+            if (client.getNick().equals(nickTo)) {
+                client.sendMessage("Сообщение от " + from.getNick() + ": " + message);
+                break;
+            }
+        }
+        from.sendMessage("Сообщение для " + nickTo + ": " + message);
+    }
 }
