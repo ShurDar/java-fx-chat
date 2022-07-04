@@ -26,13 +26,14 @@ public class ChatController {
     private final ChatClient client;
 
     public ChatController() {
+        // создается экземпляр ChatClient с ссылкой this на самого себя
         this.client = new ChatClient(this);
         while (true) {
             try {
-                client.openConnection();
-                break;
+                client.openConnection(); // подключаемся
+                break; // если соединение прошло успешно, то break
             } catch (IOException e) {
-                showNotification();
+                showNotification(); // if не успешно и было исключение, то методом showNotification сообщаем об этом
             }
         }
     }
@@ -44,15 +45,19 @@ public class ChatController {
                 new ButtonType("Попоробовать снова", ButtonBar.ButtonData.OK_DONE),
                 new ButtonType("Выйти", ButtonBar.ButtonData.CANCEL_CLOSE)
         );
-        alert.setTitle("Ошибка подключения1");
-        Optional<ButtonType> answer = alert.showAndWait();
+        alert.setTitle("Ошибка подключения!"); // прописываем заголовок
+        Optional<ButtonType> answer = alert.showAndWait(); // показываем пользователю
+        // чтобы сообщение получить, вызывается map(), в кот. передается лямбда
+        // та кнопка, на кот. пользователь нажал будет лежать в select
+        // если нажата кнопка отиены (isCancelButton()), то true, в противном случае (.orElse) - false
+        // т.е если пользователь хочет выйти - true, если нет - false
         Boolean isExit = answer.map(select -> select.getButtonData().isCancelButton()).orElse(false);
-        if(isExit){
-            System.exit(0);
+        if(isExit){ // если пользователь хочет выйти
+            System.exit(0); // выходим из системы
         }
 
     }
-
+// кнопка для отправки сообщений
     public void clickSendButton() {
         String message = messageField.getText(); // getText() возвращает тот текст, который будет введен
         if (message.isBlank()) { // isBlank() когда ответ пустой и когда вместо ответа пробелы
@@ -64,16 +69,21 @@ public class ChatController {
         messageField.requestFocus(); // устанавливаем на него фокус, чтобы был курсор
     }
 
+    // метод addMessage добавляет сообщения пользователей в форму
     public void addMessage(String message) {
         messageArea.appendText(message + "\n"); // метод .appendText() передает текст
     }
 
+    // метод, в кот. передаем признак успешной аутентификации
+    // мы создали метод и положили в него true, поэтому пока false - отображается поле с паролем
+    // после регистрации - поле с чатом
     public void setAuth(boolean success){
-        authBox.setVisible(!success);
-        messageBox.setVisible(success);
+        authBox.setVisible(!success); // до аутентификации, бокс с паолем и логином
+        messageBox.setVisible(success); // после аутентификации показываем бокс для сообщений
     }
 
-    public void signinBtnClick() {
+    public void signinBtnClick() { // когда пользователь нажимает на кнопку
+        // отправляется сообщение на утентификацию
         client.sendMessage("/auth " + loginField.getText() + " " + passField.getText());
     }
 }

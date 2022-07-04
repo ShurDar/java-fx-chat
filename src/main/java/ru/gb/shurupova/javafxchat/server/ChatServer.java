@@ -22,6 +22,8 @@ public class ChatServer {
                 System.out.println("Ожидаю подключения...");
                 Socket socket = serverSocket.accept();
                 // как только клиент подключился создаем экземпляр ClientHandler
+                // каждый экземпляр отвечает за соединение с одним клиентом
+                // для каждого клиента создается отдельный socket
                 // передаем в него socket и ссылку на наш чат сервер ChatServer через this
                 new ClientHandler(socket, this, authService);
                 System.out.println("Клиент подключен");
@@ -32,17 +34,17 @@ public class ChatServer {
     }
 
     public void broadcast(String message) {
-        for (ClientHandler client : clients) {
+        for (ClientHandler client : clients) { // в цикле, для каждого клиента вызываем sendMessage()
             client.sendMessage(message);
         }
     }
 
     public void subscribe(ClientHandler client) {
-        clients.add(client);
+        clients.add(client); // берем список клиентов и добавляем туда, того, кто только что залогинился
     }
 
     public boolean isNickBusy(String nick) {
-        for (ClientHandler client : clients) {
+        for (ClientHandler client : clients) { // пробегаемся по всем клиентам, если найден клиент с таким же ником возвращаем true, в противном случае false
             if (nick.equals(client.getNick())) {
                 return true;
             }
@@ -51,6 +53,6 @@ public class ChatServer {
     }
 
     public void unsubscribe(ClientHandler client) {
-        clients.remove(client);
+        clients.remove(client); // если пользователь вышел, убираем его из списка клиентов
     }
 }

@@ -5,6 +5,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+//класс ChatClient, в котором будет осуществляться взаимодействие с сервером
 public class ChatClient {
     private Socket socket;
     private DataInputStream in;
@@ -13,11 +14,11 @@ public class ChatClient {
 
     public ChatClient(ChatController controller) {
         this.controller = controller;
-
     }
 
+    //метод openConnection через кот. открываем соединение
     public void openConnection() throws IOException {
-        socket = new Socket("localhost", 8189);
+        socket = new Socket("localhost", 8189); // инициализируем socket
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
         new Thread(() -> {
@@ -32,15 +33,16 @@ public class ChatClient {
         }).start();
     }
 
+    // метод ждет сообщение об супешной аутентификации: /authok nick
     private void waitAuth() throws IOException {
         while (true) {
-            String message = in.readUTF();
-            if (message.startsWith("/authok")) {
+            String message = in.readUTF(); // в бесконечном цикле читаем сообщения
+            if (message.startsWith("/authok")) { // ждем сообщение "/authok", что аутентификация прошла успешно
                 String[] split = message.split("\\p{Blank}+");
                 String nick = split[1];
                 controller.setAuth(true);
                 controller.addMessage("Успешная авторизация под ником " + nick);
-                break;
+                break; // пока авторизация не успешная, крутимся в бесконечном цикле, как только прошли break
             }
         }
     }
@@ -70,13 +72,13 @@ public class ChatClient {
     }
 
     private void readMessages() throws IOException {
-        while (true) {
+        while (true) { // читаем сообщения в бесконечном цикле
             String message = in.readUTF();
-            if ("/end".equals(message)) {
+            if ("/end".equals(message)) { // пока не получим "/end"
                 controller.setAuth(false);
                 break;
             }
-            controller.addMessage(message);
+            controller.addMessage(message); // отображаем прочтенные сообщения в контроллере (на форме) через метод addMessage
         }
     }
 
