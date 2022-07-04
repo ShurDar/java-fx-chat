@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+// сервис аутентификации
 public class InMemoryAuthService implements AuthService {
 
     private static class UserDate {
@@ -30,25 +31,25 @@ public class InMemoryAuthService implements AuthService {
         }
     }
 
-    private List<UserDate> users;
+    private List<UserDate> users; // список созданных клиентов
 
     public InMemoryAuthService() { // добавили сервис аутентификации, кот содержит список пользоватетелй users
         // этот метод умеет бегать по спику пользователей и ис кать по логину и паролю ник нужного пользователя
         users = new ArrayList<>();
-        // мы список users сформировали сами циклом
+        // мы список users сформировали сами циклом из 5 пользователей
         for (int i = 0; i < 5; i++) {
-            users.add(new UserDate("nick" + i, "login" + i, "password" + i));
+            users.add(new UserDate("nick" + i, "login" + i, "pass" + i));
         }
     }
 
     @Override
     public String getNickByLoginAndPassword(String login, String password) {
-        for (UserDate user : users) {
-            if (login.equals(user.getLogin()) && password.equals(user.getPassword())) {
-                return user.getNick();
+        for (UserDate user : users) { // мы бежим в цикле по пользователям
+            if (login.equals(user.getLogin()) && password.equals(user.getPassword())) { // и проверть логин и пароль, соответствуют
+                return user.getNick(); // то возвращается ник пользователя
             }
         }
-        return null;
+        return null; // в противно случае мы выйдем из цикла и вернем null
     }
 
     @Override
