@@ -55,8 +55,8 @@ public class ChatController {
         if(isExit){ // если пользователь хочет выйти
             System.exit(0); // выходим из системы
         }
-
     }
+
 // кнопка для отправки сообщений
     public void clickSendButton() {
         String message = messageField.getText(); // getText() возвращает тот текст, который будет введен
